@@ -19,3 +19,14 @@ Presence publishing is deliberately not implemented until both title identities 
 Next: verify Shield protocol identity; reserve unused production ports (60031/8118 are
 provisional); configure TLS/SNI and account credentials; capture first login and implement
 Sword/Shield-specific calls. Do not advertise online support until tested.
+
+## Disclaimer
+
+This server ships **no** Nintendo code, keys, or copyrighted assets. It is an independent
+reimplementation for use with a community-run replacement service, not affiliated with, endorsed by,
+or associated with Nintendo or the game's publisher.
+
+## License
+
+Released under the **[PolyForm Shield License 1.0.0](LICENSE.md)**, source-available: read, use,
+modify, and self-host, but do not use it to provide a product that competes with Nextendo Network.
