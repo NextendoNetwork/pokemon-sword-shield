@@ -88,11 +88,11 @@ func main() {
 	// Pia 5.18.98 configuration is provisional until the first Register capture.
 	scCfg := nex.SwitchPia519Config()
 	secureEndpoint.Register(nex.ProtocolSecureConnection, nex.SecureConnectionHandlerWithConfig(scCfg))
-	secureEndpoint.Register(nex.ProtocolMatchmakeExtension, mm.ExtensionHandler())
+	secureEndpoint.Register(nex.ProtocolMatchmakeExtension, matchmakeExtensionHandler(mm.ExtensionHandler()))
 	secureEndpoint.Register(nex.ProtocolMatchMaking, mm.MatchMakingHandler())
 	secureEndpoint.Register(nex.ProtocolMatchMakingExt, mm.MatchMakingExtHandler())
 	secureEndpoint.Register(nex.ProtocolNATTraversal, nex.NATTraversalHandler())
-	secureEndpoint.Register(nex.ProtocolUtility, nex.UtilityHandler())
+	secureEndpoint.Register(nex.ProtocolUtility, utilityHandler())
 	secureEndpoint.Register(nex.ProtocolRanking, nex.RankingHandler())
 	secureEndpoint.Register(nex.ProtocolRanking2, nex.NewRanking2Store().Handler())
 

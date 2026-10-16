@@ -1,24 +1,31 @@
-# Pokemon Sword/Shield NEX service (initial implementation)
+# Pokémon Sword / Shield NEX server
 
-Not deployed or verified in-game yet. Uses the shared Nextendo Go NEX stack.
+Nextendo Network server for Pokémon Sword and Pokémon Shield 1.3.2 (Y-Comm: link trades, link
+battles, Surprise Trade, Max Raid Battles, stamps). Uses the shared Nextendo Go NEX stack.
 
-Verified from Sword 1.3.2 main:
-- Title: 0100ABF008968000; Shield title: 01008DB008C2C000 (protocol parity not yet checked).
-- Build: A3B75BCD3311385AEED67FBEEB79CBB7BF02F471000000000000000000000000.
-- Server ID: 25b8e100 at main+0x11083d8.
-- Access key: d6eee09e, string at main+0x20688ec referenced at main+0x11083e4.
-- SDK: NEX 4.6.8-appor; Pia 5.18.98.
-- Observed endpoint: g25b8e100-lp1.s.n.srv.nintendo.net.
-- Current client error: 2306-0502 after the redirected endpoint request.
+Both games use the same game server: Sword `0100ABF008968000` and Shield `01008DB008C2C000` share
+server ID `25b8e100` (main+0x11083d8 / +0x1108408) and access key `d6eee09e`, NEX 4.6.8, Pia 5.18.98.
+Endpoint: `g25b8e100-lp1.s.n.srv.nintendo.net`.
 
-Source provides account-validated authentication, secure registration, shared matchmaking,
-NAT traversal, utility and ranking handlers. Game-specific requests remain to be traced.
-Pia registration layout is provisional. No ZA4 capacity/identity overrides copied.
-Presence publishing is deliberately not implemented until both title identities are mapped.
+## Game-specific handlers
 
-Next: verify Shield protocol identity; reserve unused production ports (60031/8118 are
-provisional); configure TLS/SNI and account credentials; capture first login and implement
-Sword/Shield-specific calls. Do not advertise online support until tested.
+Every layout below was taken from the 1.3.2 `main` (request builders and response decoders); the
+Utility and Subscription handlers were confirmed in game with two accounts.
+
+- `utility.go` — Utility (0x6E) method 9: one u8 in, one u64 out. Unanswered it shows 2306-0103.
+- `subscription.go` — Subscription (0x75), which drives the Y-Comm:
+  - 1/2/3 publish the player's `SubscriptionData` (512-byte profile, raid details when hosting).
+  - 15/16 exchange location records (other players in the Wild Area); 17 fetches friends' records.
+  - New stamps reach other players through a pushed NotificationEvent of type **112002**; the game
+    then calls method 10, answered with `List<ActivePlayerSubscriptionData>`.
+- `regulation.go` — MatchmakeExtension (0x6D) method 55, the Battle Stadium rule set query:
+  answered with an empty `List<RegulationIndex>` (no official rule sets exist any more). Without it
+  the game spins on "Checking the data…".
+
+## Status
+
+Working: login, link trade, matchmaking and NAT traversal, Wild Area presence, Y-Comm stamps and
+Max Raid Battle invites. Battle Stadium online competitions list no rule sets.
 
 ## Disclaimer
 
