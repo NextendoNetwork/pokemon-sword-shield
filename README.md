@@ -19,7 +19,7 @@ Utility and Subscription handlers were confirmed in game with two accounts.
   - New stamps reach other players through a pushed NotificationEvent of type **112002**; the game
     then calls method 10, answered with `List<ActivePlayerSubscriptionData>`.
 - `regulation.go` — MatchmakeExtension (0x6D) method 55, the Battle Stadium rule set query:
-  answered with an empty `List<RegulationIndex>` (no official rule sets exist any more). Without it
+  answered with an empty `List<RegulationIndex>` . Without it
   the game spins on "Checking the data…".
 
 ## Status
