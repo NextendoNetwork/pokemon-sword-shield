@@ -84,6 +84,7 @@ func main() {
 	secureEndpoint.SetSecureAccount(securePassword, securePID)
 
 	secureEndpoint.Register(0x75, subscriptionHandler())
+	secureEndpoint.Register(protocolDataStore, dataStoreHandler())
 	mm := nex.NewMatchmaking()
 	// Pia 5.18.98 configuration is provisional until the first Register capture.
 	scCfg := nex.SwitchPia519Config()
@@ -95,6 +96,7 @@ func main() {
 	secureEndpoint.Register(nex.ProtocolUtility, utilityHandler())
 	secureEndpoint.Register(nex.ProtocolRanking, nex.RankingHandler())
 	secureEndpoint.Register(nex.ProtocolRanking2, nex.NewRanking2Store().Handler())
+	secureEndpoint.Register(protocolMatchmakeReferee, refereeHandler())
 
 	logSecure := logRMC("Secure")
 	secureEndpoint.OnRMC = func(c *nex.Connection, req *nex.RMCMessage) {

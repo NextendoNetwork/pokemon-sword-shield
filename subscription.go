@@ -55,6 +55,9 @@ func subscriptionHandler() func(*nex.Connection, *nex.RMCMessage) *nex.RMCMessag
 		mu.Lock()
 		lastSeen[c.PID] = time.Now()
 		mu.Unlock()
+		// Y-Comm stamps belong to every connected player: outside the Wild Area there is no
+		// 0x75 heartbeat, and a time window left them with stale raid gids (2-ALZBA-0034).
+		connected := func(pid uint64) bool { return c.Endpoint.FindConnectionByPID(pid) != nil }
 		switch req.Method {
 		case 1, 2, 3:
 			channel, e, rest, ok := parseSubscriptionData(req.Body)
@@ -70,7 +73,7 @@ func subscriptionHandler() func(*nex.Connection, *nex.RMCMessage) *nex.RMCMessag
 			entries[c.PID][channel] = e
 			var others []uint64
 			for pid := range entries {
-				if pid != c.PID && time.Since(lastSeen[pid]) < subscriptionActiveWindow {
+				if pid != c.PID && connected(pid) {
 					others = append(others, pid)
 				}
 			}
@@ -96,7 +99,7 @@ func subscriptionHandler() func(*nex.Connection, *nex.RMCMessage) *nex.RMCMessag
 			mu.Lock()
 			pids := make([]uint64, 0, len(entries))
 			for pid := range entries {
-				if pid != c.PID && time.Since(lastSeen[pid]) < subscriptionActiveWindow {
+				if pid != c.PID && connected(pid) {
 					pids = append(pids, pid)
 				}
 			}
